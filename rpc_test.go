@@ -16,8 +16,8 @@ func TestRPC(t *testing.T) {
 	t.Log("login success")
 
 	param := map[string]interface{}{
-		"username": "a",
-		"password": "a",
+		"username": "ax",
+		"password": "ax",
 	}
 	data, err := rpc.JsonCall("GetNxsUserInfo", param)
 	if err != nil {

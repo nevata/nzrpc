@@ -201,6 +201,13 @@ func (c *NzRPC) JsonCall(cmd string, param interface{}) ([]byte, error) {
 		if e != nil {
 			return nil, e
 		}
+		if jsonOut.Result[1].(float64) != 0 {
+			return nil, NewError(
+				int(jsonOut.Result[1].(float64)),
+				int(jsonOut.Result[2].(float64)),
+			)
+
+		}
 		return jsonOut.Param, nil
 
 	}
