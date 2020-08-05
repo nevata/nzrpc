@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -66,7 +65,7 @@ func (c *NzRPC) doChallenge(challenge []byte) error {
 		r := regexp.MustCompile("rpc.challenge=([a-z,0-9]+)[\n]?")
 		list := r.FindStringSubmatch(string(data))
 		if len(list) < 1 {
-			return errors.New("No challenge")
+			return NewError(ErrClassRpc, ErrCodeNoChallenge)
 		}
 		c.loginChallenge = []byte(list[1])
 
