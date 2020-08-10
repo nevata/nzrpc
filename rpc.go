@@ -65,7 +65,7 @@ func (c *NzRPC) doChallenge(challenge []byte) error {
 		r := regexp.MustCompile("rpc.challenge=([a-z,0-9]+)[\n]?")
 		list := r.FindStringSubmatch(string(data))
 		if len(list) < 1 {
-			return NewError(ErrClassRpc, ErrCodeNoChallenge)
+			return NewError("challenge", ErrClassRpc, ErrCodeNoChallenge, "code no challenge")
 		}
 		c.loginChallenge = []byte(list[1])
 
@@ -200,13 +200,11 @@ func (c *NzRPC) JsonCall(cmd string, param interface{}) ([]byte, error) {
 		if e != nil {
 			return nil, e
 		}
-		if jsonOut.Result[1].(float64) != 0 {
-			return nil, NewError(
-				int(jsonOut.Result[1].(float64)),
-				int(jsonOut.Result[2].(float64)),
-			)
-
+		e = checkError(jsonOut.Result)
+		if e != nil {
+			return nil, e
 		}
+
 		return jsonOut.Param, nil
 
 	}

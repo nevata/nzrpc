@@ -5,6 +5,8 @@ import (
 )
 
 const (
+	Success = 0
+
 	ErrClassRpc = 1
 	ErrClassCli = 2
 	// ErrClassSrv = 3
@@ -25,14 +27,38 @@ const (
 )
 
 type Error struct {
+	Call  string
 	Class int
 	Code  int
+	Msg   string
 }
 
-func NewError(class, code int) error {
-	return &Error{Class: class, Code: code}
+func NewError(call string, class, code int, msg string) error {
+	return &Error{Call: call, Class: class, Code: code, Msg: msg}
 }
 
 func (e Error) Error() string {
 	return fmt.Sprintf("nzrpc-error: class=%d, code=%d", e.Class, e.Code)
+}
+
+func checkError(result []interface{}) error {
+	code := int(result[1].(float64))
+	switch code {
+	case Success:
+		return nil
+	case ErrClassRpc, ErrClassCli, ErrClassApp:
+		return NewError(
+			result[0].(string),
+			code,
+			int(result[2].(float64)),
+			result[3].(string),
+		)
+	default:
+		return NewError(
+			result[0].(string),
+			0,
+			code,
+			result[2].(string),
+		)
+	}
 }
