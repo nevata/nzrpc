@@ -27,10 +27,11 @@ type NzRPC struct {
 
 func (c *NzRPC) doOpen(addr string, port uint16) error {
 	var err error
-	c.conn, err = net.Dial("tcp", fmt.Sprintf("%s:%d", addr, port))
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", addr, port))
 	if err != nil {
 		return err
 	}
+	c.conn = conn
 	return nil
 }
 

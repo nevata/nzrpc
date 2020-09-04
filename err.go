@@ -42,23 +42,35 @@ func (e Error) Error() string {
 }
 
 func checkError(result []interface{}) error {
-	code := int(result[1].(float64))
-	switch code {
+	call := result[0].(string)
+	flag := int(result[1].(float64))
+	switch flag {
 	case Success:
 		return nil
 	case ErrClassRpc, ErrClassCli, ErrClassApp:
+		class := flag
+		code := int(result[2].(float64))
+		msg := ""
+		if len(result) > 3 {
+			msg = result[3].(string)
+		}
 		return NewError(
-			result[0].(string),
+			call,
+			class,
 			code,
-			int(result[2].(float64)),
-			result[3].(string),
+			msg,
 		)
 	default:
+		code := int(result[1].(float64))
+		msg := ""
+		if len(result) > 2 {
+			msg = result[2].(string)
+		}
 		return NewError(
-			result[0].(string),
+			call,
 			0,
 			code,
-			result[2].(string),
+			msg,
 		)
 	}
 }
